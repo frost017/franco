@@ -1,24 +1,34 @@
+"use client"
+
 import Link from "next/link"
+import ProgressiveImage from "@/components/ProgressiveImage"
 
 type Props = {
   bgImage: string
+  bgLowImage: string
   eyebrow?: string
   headingLine1: string
   headingLine2?: string
+  priority?: boolean
 }
 
 export default function ServiceHero({
   bgImage,
+  bgLowImage,
   eyebrow = "Services",
   headingLine1,
   headingLine2,
+  priority = false,
 }: Props) {
   return (
-    <section className="relative flex min-h-[295px] items-center justify-center lg:min-h-[365px]">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('${bgImage}')` }}
-      >
+    <section className="relative flex min-h-[295px] items-center justify-center overflow-hidden lg:min-h-[365px]">
+      <div className="absolute inset-0">
+        <ProgressiveImage
+          lowSrc={bgLowImage}
+          highSrc={bgImage}
+          alt="Service background"
+          priority={priority}
+        />
         <div className="absolute inset-0 bg-black/20" />
       </div>
 

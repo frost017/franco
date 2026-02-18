@@ -1,23 +1,81 @@
+"use client"
+
 import Link from "next/link"
+import Image from "next/image"
+import { useEffect, useState, useRef } from "react"
 
 export default function HeroSection() {
+  const [reducedMotion, setReducedMotion] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
+  const [hiLoaded, setHiLoaded] = useState(false)
+
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setReducedMotion(mediaQuery.matches)
+  }, [])
+
   return (
     <section className="relative flex min-h-[600px] items-center justify-center overflow-hidden lg:min-h-[700px]">
-  
-      {/* Background Video */}
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        src="/background.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-      />
 
-      {/* Dark Overlay */}
-      {/* <div className="absolute inset-0 bg-black/10" /> */}
+      {/* ================= Progressive Image ================= */}
 
-      {/* Content */}
+      <div className="absolute inset-0">
+
+        {/* LOW RES */}
+        <Image
+          src="/hero-poster.jpg"
+          alt=""
+          fill
+          priority
+          className={[
+            "object-cover blur-lg scale-110 transition-opacity duration-700",
+            hiLoaded ? "opacity-0" : "opacity-100",
+          ].join(" ")}
+        />
+
+        {/* HIGH RES */}
+        <Image
+          src="/hero-poster.jpg"
+          alt=""
+          fill
+          priority={false}
+          loading="eager"
+          className={[
+            "object-cover transition-opacity duration-700",
+            hiLoaded ? "opacity-100" : "opacity-0",
+          ].join(" ")}
+          onLoadingComplete={() => setHiLoaded(true)}
+        />
+
+      </div>
+
+      {/* ================= Video ================= */}
+
+      {!reducedMotion && (
+        <video
+          ref={videoRef}
+          className={[
+            "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
+            videoReady ? "opacity-100" : "opacity-0",
+          ].join(" ")}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          onLoadedData={() => setVideoReady(true)}
+        >
+          <source src="/background.mp4" type="video/mp4" />
+        </video>
+      )}
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* ================= Content ================= */}
+
       <div className="relative z-10 px-6 py-32 text-center">
         <h1 className="mx-auto max-w-5xl text-4xl font-semibold uppercase leading-tight tracking-tight text-white 
         md:text-5xl lg:text-6xl 
