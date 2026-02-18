@@ -2,9 +2,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import HeroSection from "@/components/home/hero-section"
 import IntroSection from "@/components/home/intro-section"
-import AboutPreviewSection from "@/components/home/about-preview-section"
 import CardSection from "@/components/home/card-section"
-import ProjectsSection from "@/components/home/projects-section"
 import NewsSection from "@/components/home/news-section"
 
 const cards = [
@@ -14,6 +12,7 @@ const cards = [
       "One focus. Five decades. Proven experience and precision you can trust in masonry and concrete restoration.",
     buttonText: "About Us",
     image: "/card1.png",
+    lowImage: "/card1_low.jpg",
     location: "right" as const,
     href: "/about",
   },
@@ -23,6 +22,7 @@ const cards = [
       "We foster a diverse, professional workplace where people are trained, supported, and given room to grow. Our culture, values, and pride show in what we build and restore.",
     buttonText: "Learn More",
     image: "/card2.png",
+    lowImage: "/card2_low.jpg",
     location: "left" as const,
     href: "/about#culture",
   },
@@ -32,6 +32,7 @@ const cards = [
       "We purpose every project with integrity—protecting what matters and extending the life of existing buildings safely and reliably.",
     buttonText: "View Projects",
     image: "/card3.png",
+    lowImage: "/card3_low.jpg",
     location: "right" as const,
     href: "/projects",
   },
@@ -43,19 +44,23 @@ export default function HomePage() {
       <Header />
       <HeroSection />
       <IntroSection />
+
       <div className="space-y-3">
         {cards.map((card, index) => (
-        <CardSection
-          key={index}
-          header={card.header}
-          descriptor={card.descriptor}
-          buttonText={card.buttonText}
-          image={card.image}
-          location={card.location}
-          href={card.href}
-        />
-      ))}
+          <CardSection
+            key={index}
+            header={card.header}
+            descriptor={card.descriptor}
+            buttonText={card.buttonText}
+            image={card.image}
+            lowImage={card.lowImage}
+            location={card.location}
+            href={card.href}
+            aboveTheFold={index === 0} // ✅ only the first card eager loads
+          />
+        ))}
       </div>
+
       <NewsSection />
       <Footer />
     </main>

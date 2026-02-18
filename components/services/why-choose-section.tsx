@@ -1,19 +1,39 @@
-import Image from "next/image"
+// =================================
+// components/WhyChooseSection.tsx
+// =================================
+"use client"
+
+import ProgressiveImage from "@/components/ProgressiveImage"
 
 type Props = {
-  image: string
+  image: string // high
+  lowImage: string // low
   lead: string
   points: string[]
+  priority?: boolean
 }
 
-export default function WhyChooseSection({ image, lead, points }: Props) {
+export default function WhyChooseSection({
+  image,
+  lowImage,
+  lead,
+  points,
+  priority = false,
+}: Props) {
   return (
-    <section className="relative">
+    <section className="relative bg-black">
       {/* MOBILE */}
       <div className="md:hidden">
-        <div className="relative h-[240px] w-full">
-          <Image src={image} alt="Why Choose" fill className="object-cover" priority />
-          <div className="absolute inset-0"/>
+        <div className="relative h-[240px] w-full overflow-hidden bg-black">
+          <ProgressiveImage
+            lowSrc={lowImage}
+            highSrc={image}
+            alt="Why Choose"
+            priority={priority}
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
 
         <div className="w-full bg-[#111]">
@@ -26,7 +46,10 @@ export default function WhyChooseSection({ image, lead, points }: Props) {
 
             <ul className="mt-6 space-y-3">
               {points.map((p, i) => (
-                <li key={i} className="flex items-start gap-3 text-base font-semibold">
+                <li
+                  key={i}
+                  className="flex items-start gap-3 text-base font-semibold"
+                >
                   <span className="mt-2 h-2 w-2 rounded-full bg-white" />
                   {p}
                 </li>
@@ -38,10 +61,17 @@ export default function WhyChooseSection({ image, lead, points }: Props) {
 
       {/* DESKTOP */}
       <div className="hidden md:block">
-        <section className="relative min-h-[450px] lg:min-h-[500px]">
+        <section className="relative min-h-[450px] overflow-hidden bg-black lg:min-h-[500px]">
           <div className="absolute inset-0">
-            <Image src={image} alt="Why Choose" fill className="object-cover" priority />
-            <div className="absolute inset-0"/>
+            <ProgressiveImage
+              lowSrc={lowImage}
+              highSrc={image}
+              alt="Why Choose"
+              priority={priority}
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/20" />
           </div>
 
           <div className="relative z-10 flex min-h-[450px] items-center justify-end px-6 lg:min-h-[500px] lg:px-16">
@@ -51,11 +81,17 @@ export default function WhyChooseSection({ image, lead, points }: Props) {
 
               <div className="relative z-10 flex flex-col text-white pt-[32px] pl-[48px] pr-[24px] pb-[32px]">
                 <h2 className="text-4xl font-extrabold">Why Choose Us?</h2>
-                <p className="mt-4 text-base leading-[1.6] text-white/90 md:text-lg">{lead}</p>
+
+                <p className="mt-4 text-base leading-[1.6] text-white/90 md:text-lg">
+                  {lead}
+                </p>
 
                 <ul className="mt-6 space-y-2">
                   {points.map((p, i) => (
-                    <li key={i} className="flex items-start gap-3 text-base font-semibold md:text-lg">
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 text-base font-semibold md:text-lg"
+                    >
                       <span className="mt-2 h-2 w-2 rounded-full bg-white" />
                       {p}
                     </li>
