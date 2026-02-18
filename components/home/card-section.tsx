@@ -1,13 +1,66 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
+import { useState } from "react"
 
 type CardSectionProps = {
   header: string
   descriptor: string
   buttonText: string
   location?: "left" | "right"
+
+  /** High-res image */
   image: string
+  /** Low-res (tiny) image shown first */
+  lowImage: string
+
   href?: string
+  aboveTheFold?: boolean
+}
+
+function ProgressiveImage({
+  lowSrc,
+  highSrc,
+  alt,
+  priority = false,
+}: {
+  lowSrc: string
+  highSrc: string
+  alt: string
+  priority?: boolean
+}) {
+  const [hiLoaded, setHiLoaded] = useState(false)
+
+  return (
+    <div className="absolute inset-0 bg-black">
+      {/* LOW: always visible base layer (fastest paint) */}
+      <img
+        src={lowSrc}
+        alt={alt}
+        className="absolute inset-0 h-full w-full object-cover"
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        // @ts-expect-error
+        fetchpriority={priority ? "high" : "auto"}
+      />
+
+      {/* HIGH: fades in on top */}
+      <Image
+        src={highSrc}
+        alt={alt}
+        fill
+        sizes="100vw"
+        priority={false}
+        loading={priority ? "eager" : "lazy"}
+        className={[
+          "object-cover transition-opacity duration-500",
+          hiLoaded ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+        onLoadingComplete={() => setHiLoaded(true)}
+      />
+    </div>
+  )
 }
 
 export default function CardSection({
@@ -16,16 +69,23 @@ export default function CardSection({
   buttonText,
   location = "left",
   image,
+  lowImage,
   href = "/about",
+  aboveTheFold = false,
 }: CardSectionProps) {
   const desktopJustify = location === "right" ? "justify-end" : "justify-start"
 
   return (
-    <section className="relative">
-      {/* ===== Mobile (unchanged) ===== */}
+    <section className="relative bg-black">
+      {/* ===== Mobile ===== */}
       <div className="md:hidden">
-        <div className="relative h-[240px] w-full">
-          <Image src={image} alt={header} fill className="object-cover" priority />
+        <div className="relative h-[240px] w-full overflow-hidden bg-black">
+          <ProgressiveImage
+            lowSrc={lowImage}
+            highSrc={image}
+            alt={header}
+            priority={aboveTheFold}
+          />
           <div className="absolute inset-0" />
         </div>
 
@@ -53,12 +113,17 @@ export default function CardSection({
         </div>
       </div>
 
-      {/* ===== Desktop (NEW – image-based card) ===== */}
+      {/* ===== Desktop ===== */}
       <div className="hidden md:block">
-        <div className="relative min-h-[600px]">
-          {/* Background image */}
+        <div className="relative min-h-[600px] overflow-hidden bg-black">
+          {/* Background */}
           <div className="absolute inset-0">
-            <Image src={image} alt={header} fill className="object-cover" priority />
+            <ProgressiveImage
+              lowSrc={lowImage}
+              highSrc={image}
+              alt={header}
+              priority={aboveTheFold}
+            />
             <div className="absolute inset-0" />
           </div>
 
@@ -66,17 +131,15 @@ export default function CardSection({
             className={`relative z-10 flex min-h-[600px] items-end ${desktopJustify} px-16 pb-16`}
           >
             <div className="relative w-full max-w-md">
-              
-              {/* Card frame image */}
               <Image
-                src="/card.png" 
+                src="/card.png"
                 alt="Card Frame"
                 width={500}
                 height={400}
                 className="w-full h-auto"
+                loading="lazy"
               />
 
-              {/* Text content positioned on top of card */}
               <div className="absolute inset-0 flex flex-col justify-center px-10 py-8 text-white">
                 <h2 className="mt-2 text-3xl font-extrabold uppercase leading-[1.05] tracking-tight">
                   {header}
@@ -95,7 +158,6 @@ export default function CardSection({
                   </Link>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

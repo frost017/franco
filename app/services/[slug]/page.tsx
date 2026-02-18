@@ -37,17 +37,21 @@ export default async function ServicePage({ params }: Props) {
 
       <ServiceHero
         bgImage={service.hero.bgImage}
+        bgLowImage={service.hero.bgLowImage} // ✅ NEW
         eyebrow={service.hero.eyebrow}
         headingLine1={service.hero.headingLine1}
         headingLine2={service.hero.headingLine2}
+        priority // ✅ hero is above the fold
       />
 
       <ServiceDescription text={service.description} />
 
       <WhyChooseSection
         image={service.why.image}
+        lowImage={service.why.lowImage} // ✅ NEW
         lead={service.why.lead}
         points={service.why.points}
+        priority={false} // (optional) set true only if this is above fold
       />
 
       <GallerySection images={service.gallery} />
